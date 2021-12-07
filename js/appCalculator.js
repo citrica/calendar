@@ -1,3 +1,17 @@
+var getRandomMoney = (min, max) => { // Función que genera valores aleatorios entre un mínimo y máximo
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+var createCashBox = (min, max) => { // Crear caja inicial con número de billetes y monedas
+    var cash = new Array(14).fill(0);
+    for (var i = 0; i < cash.length; i++) {
+        cash[i] = getRandomMoney(min, max);
+    }
+    cash[0] = 0;
+    cash[1] = 1;
+    return cash;
+};
+
 var moneyPaid = () => document.getElementById("input-delivery").value;
 var pay = () => document.getElementById("input-total").value;
 
@@ -13,8 +27,6 @@ var errorMessage = () => "El importe entregado es menor que el total a pagar. ¡
 var calculationDifference = (total, delivered) => (delivered - total).toFixed(2);
 
 // Calcular el cambio que debemos dar
-
-// Función para calcular cantidad de billetes
 var calculateMoney = (change, bill) => {
     var dif = parseInt(change / bill);
     if (dif > 0) change = (change - (bill * dif)).toFixed(2);
@@ -31,7 +43,7 @@ var moneyRefund = () => {
 }
 
 // Calcular el cambio
-var calculateChange = (change) => {
+var calculateChange = (cash, change) => {
     var money = {
         b200: 0,
         b100: 0,
@@ -49,77 +61,105 @@ var calculateChange = (change) => {
         m1c: 0,
     }
     var result = new Array();
-
-    // Calcular cambio de billetes
+    // Calcular cambio
     if (change >= 200) {
         result = calculateMoney(change, 200);
-        change = result[0];
-        money.b200 = result[1];
+        console.log(result);
+        if (cash[0] >= result[1]) {
+            change = result[0];
+            money.b200 = result[1];
+        }
     }
     if (change >= 100) {
         result = calculateMoney(change, 100);
-        change = result[0];
-        money.b100 = result[1];
+        if (cash[1] >= result[1]) {
+            change = result[0];
+            money.b100 = result[1];
+        }
     }
     if (change >= 50) {
         result = calculateMoney(change, 50);
-        change = result[0];
-        money.b50 = result[1];
+        if (cash[2] >= result[1]) {
+            change = result[0];
+            money.b50 = result[1];
+        }
     }
     if (change >= 20) {
         result = calculateMoney(change, 20);
-        change = result[0];
-        money.b20 = result[1];
+        if (cash[3] >= result[1]) {
+            change = result[0];
+            money.b20 = result[1];
+        }
     }
     if (change >= 10) {
         result = calculateMoney(change, 10);
-        change = result[0];
-        money.b10 = result[1];
+        if (cash[4] >= result[1]) {
+            change = result[0];
+            money.b10 = result[1];
+        }
     }
     if (change >= 5) {
         result = calculateMoney(change, 5);
-        change = result[0];
-        money.b5 = result[1];
+        if (cash[5] >= result[1]) {
+            change = result[0];
+            money.b5 = result[1];
+        }
     }
     if (change >= 2) {
         result = calculateMoney(change, 2);
-        change = result[0];
-        money.m2 = result[1];
+        if (cash[6] >= result[1]) {
+            change = result[0];
+            money.m2 = result[1];
+        }
     }
     if (change >= 1) {
         result = calculateMoney(change, 1);
-        change = result[0];
-        money.m1 = result[1];
+        if (cash[7] >= result[1]) {
+            change = result[0];
+            money.m1 = result[1];
+        }
     }
     if (change >= 0.50) {
         result = calculateMoney(change, 0.50);
-        change = result[0];
-        money.m50c = result[1];
+        if (cash[8] >= result[1]) {
+            change = result[0];
+            money.m50c = result[1];
+        }
     }
     if (change >= 0.20) {
         result = calculateMoney(change, 0.20);
-        change = result[0];
-        money.m20c = result[1];
+        if (cash[9] >= result[1]) {
+            change = result[0];
+            money.m20c = result[1];
+        }
     }
     if (change >= 0.10) {
         result = calculateMoney(change, 0.10);
-        change = result[0];
-        money.m10c = result[1];
+        if (cash[10] >= result[1]) {
+            change = result[0];
+            money.m10c = result[1];
+        }
     }
     if (change >= 0.05) {
         result = calculateMoney(change, 0.05);
-        change = result[0];
-        money.m5c = result[1];
+        if (cash[11] >= result[1]) {
+            change = result[0];
+            money.m5c = result[1];
+        }
     }
     if (change >= 0.02) {
         result = calculateMoney(change, 0.02);
-        change = result[0];
-        money.m2c = result[1];
+        if (cash[12] >= result[1]) {
+            change = result[0];
+            money.m2c = result[1];
+        }
     }
     if (change >= 0.01) {
         result = calculateMoney(change, 0.01);
-        change = result[0];
-        money.m1c = result[1];
+        if (cash[13] >= result[1]) {
+            change = result[0];
+            money.m1c = result[1];
+        }
     }
     return money;
 };
@@ -142,10 +182,13 @@ var writeResult = (money) => {
     document.getElementById("m1c").innerText = "Monedas de 1cents = " + money.m1c;
 }
 
+var cashInit = createCashBox(0, 10);
 // Mostrar el cálculo del importe a devolver
 var result = () => document.getElementById("result").innerText = moneyRefund();
-var resultChange = () => writeResult(calculateChange(result()));
+var resultChange = () => writeResult(calculateChange(cashInit, result()));
 
 // Eventos
 document.getElementById("button-calulate").addEventListener("click", result);
 document.getElementById("button-calulate").addEventListener("click", resultChange);
+
+console.log(cashInit);
