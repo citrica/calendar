@@ -8,10 +8,44 @@
     <title>Module 6.3</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+<header id="title">
+    <h1 class="title">Calculator</h1>
+</header>
+<main>
+    <label for="input-total">Enter the total amount</label>
+    <input type="text" min="0" id="input-total">
+    <label for="input-delivery">Enter the quantity delivered</label>
+    <input type="text" min="0" id="input-delivery">
+    <button id="button-calulate">Calculate</button>
+    <section class=result-header>
+        <h2>To be returned =
+            <span id="result"></span>
+        </h2>
+    </section>
+    <section class=result-change>
+        <h2>Breakdown of money to be returned:</h2>
+        <p><span id="result-change">
+            <ul id="b200"></ul>
+            <ul id="b100"></ul>
+            <ul id="b50"></ul>
+            <ul id="b20"></ul>
+            <ul id="b10"></ul>
+            <ul id="b5"></ul>
+            <ul id="m2"></ul>
+            <ul id="m1"></ul>
+            <ul id="m50c"></ul>
+            <ul id="m20c"></ul>
+            <ul id="m10c"></ul>
+            <ul id="m5c"></ul>
+            <ul id="m2c"></ul>
+            <ul id="m1c"></ul>
+        </span></p>
+    </section>
+</main>
 
 <body>
-    <h1>Calendar</h1>
-    <script src="js/app.js"></script>
+    <script src="js/appCalendar.js"></script>
+    <script src="js/appCalculator.js"></script>
 </body>
 
 </html>
