@@ -183,11 +183,11 @@ var writeResult = (money) => {
 }
 
 /* Crear caja con cambio de forma aleatoria */
-var cashInit = createCashBox(0, 5);
+var cashInit = createCashBox(0, 5); // A modo de ejemplo, se crea caja con efectivo que tiene disponible entre 1 y 5 unidades de cada billete/moneda
 /* Mostrar el cálculo del importe a devolver */
 var result = () => document.getElementById("result").innerText = moneyRefund();
 var resultChange = () => calculateChange(cashInit, result());
-console.log(cashInit); // Array ara ver en consola el número de billetes y monedas de cada caso
+console.log(cashInit); // Array para ver en consola el número de billetes y monedas de cada caso
 
 /* Eventos */
 document.getElementById("button-calulate").addEventListener("click", result);
