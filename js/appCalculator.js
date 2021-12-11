@@ -1,39 +1,50 @@
-var getRandomMoney = (min, max) => { // Función que genera valores aleatorios entre un mínimo y máximo
+/* Función que genera valores aleatorios entre un mínimo y máximo */
+var getRandomMoney = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-var createCashBox = (min, max) => { // Crear caja inicial con número de billetes y monedas
+/* Crear caja inicial con número de billetes y monedas aleatorio*/
+var createCashBox = (min, max) => {
     var cash = new Array(14).fill(0);
     for (var i = 0; i < cash.length; i++) {
         cash[i] = getRandomMoney(min, max);
     }
-    cash[0] = 0;
-    cash[1] = 1;
     return cash;
 };
 
-var moneyPaid = () => document.getElementById("input-delivery").value;
-var pay = () => document.getElementById("input-total").value;
+var moneyPaid = () => document.getElementById("input-delivery").value; // Dinero a pagar
+var pay = () => document.getElementById("input-total").value; // Dinero pagado
 
-// Comprobar que el pago es superior o igual al total a pagar
+/* Comprobar que el pago es superior o igual al total a pagar */
 var moneyError = (total, delivered) => {
     if (delivered < total) return true;
 }
 
-// Mensaje de error
+/* Mensaje de error */
 var errorMessage = () => "El importe entregado es menor que el total a pagar. ¡Paga moroso!";
-
-// Calcular diferencia entre total y los que nos da el cliente
+/* Calcular diferencia entre total y los que nos da el cliente */
 var calculationDifference = (total, delivered) => (delivered - total).toFixed(2);
-
-// Calcular el cambio que debemos dar
-var calculateMoney = (change, bill) => {
-    var dif = parseInt(change / bill);
-    if (dif > 0) change = (change - (bill * dif)).toFixed(2);
-    return [change, dif];
+/* Calcular el cambio que debemos dar */
+var calculateMoney = (change, bill, numHave) => {
+    var info = {
+        newChange: change,
+        numHave: numHave,
+        numReturn: 0,
+    }
+    var numNeed = parseInt(info.newChange / bill);
+    if (info.numHave >= numNeed) {
+        info.newChange = (info.newChange - (bill * numNeed)).toFixed(2);
+        info.numReturn = numNeed;
+        info.numHave = info.numHave - numNeed;
+    } else {
+        info.newChange = (info.newChange - (bill * info.numHave)).toFixed(2);
+        info.numReturn = info.numHave;
+        info.numHave = 0;
+    }
+    return info;
 }
 
-// Dinero a devolver, teniendo en cuenta si se está cubriendo el pago completo
+/* Dinero total a devolver, teniendo en cuenta si se está cubriendo el pago completo */
 var moneyRefund = () => {
     if (moneyError(pay(), moneyPaid())) {
         return errorMessage();
@@ -42,7 +53,7 @@ var moneyRefund = () => {
     }
 }
 
-// Calcular el cambio
+/* Calcular cambio */
 var calculateChange = (cash, change) => {
     var money = {
         b200: 0,
@@ -60,111 +71,100 @@ var calculateChange = (cash, change) => {
         m2c: 0,
         m1c: 0,
     }
-    var result = new Array();
-    // Calcular cambio
-    if (change >= 200) {
-        result = calculateMoney(change, 200);
-        console.log(result);
-        if (cash[0] >= result[1]) {
-            change = result[0];
-            money.b200 = result[1];
-        }
+    var result = new Array(3);
+    if (change >= 200 && cash[0] > 0) {
+        result = calculateMoney(change, 200, cash[0]);
+        change = result.newChange;
+        cash[0] = result.numHave;
+        money.b200 = result.numReturn;
     }
-    if (change >= 100) {
-        result = calculateMoney(change, 100);
-        if (cash[1] >= result[1]) {
-            change = result[0];
-            money.b100 = result[1];
-        }
+    if (change >= 100 && cash[1] > 0) {
+        result = calculateMoney(change, 100, cash[1]);
+        change = result.newChange;
+        cash[1] = result.numHave;
+        money.b100 = result.numReturn;
     }
-    if (change >= 50) {
-        result = calculateMoney(change, 50);
-        if (cash[2] >= result[1]) {
-            change = result[0];
-            money.b50 = result[1];
-        }
+    if (change >= 50 && cash[2] > 0) {
+        result = calculateMoney(change, 50, cash[2]);
+        change = result.newChange;
+        cash[2] = result.numHave;
+        money.b50 = result.numReturn;
     }
-    if (change >= 20) {
-        result = calculateMoney(change, 20);
-        if (cash[3] >= result[1]) {
-            change = result[0];
-            money.b20 = result[1];
-        }
+    if (change >= 20 && cash[3] > 0) {
+        result = calculateMoney(change, 20, cash[3]);
+        change = result.newChange;
+        cash[3] = result.numHave;
+        money.b20 = result.numReturn;
     }
-    if (change >= 10) {
-        result = calculateMoney(change, 10);
-        if (cash[4] >= result[1]) {
-            change = result[0];
-            money.b10 = result[1];
-        }
+    if (change >= 10 && cash[4] > 0) {
+        result = calculateMoney(change, 10, cash[4]);
+        change = result.newChange;
+        cash[4] = result.numHave;
+        money.b10 = result.numReturn;
     }
-    if (change >= 5) {
-        result = calculateMoney(change, 5);
-        if (cash[5] >= result[1]) {
-            change = result[0];
-            money.b5 = result[1];
-        }
+    if (change >= 5 && cash[5] > 0) {
+        result = calculateMoney(change, 5, cash[5]);
+        change = result.newChange;
+        cash[5] = result.numHave;
+        money.b5 = result.numReturn;
     }
-    if (change >= 2) {
-        result = calculateMoney(change, 2);
-        if (cash[6] >= result[1]) {
-            change = result[0];
-            money.m2 = result[1];
-        }
+    if (change >= 2 && cash[6] > 0) {
+        result = calculateMoney(change, 2, cash[6]);
+        change = result.newChange;
+        cash[6] = result.numHave;
+        money.m2 = result.numReturn;
     }
-    if (change >= 1) {
-        result = calculateMoney(change, 1);
-        if (cash[7] >= result[1]) {
-            change = result[0];
-            money.m1 = result[1];
-        }
+    if (change >= 1 && cash[7] > 0) {
+        result = calculateMoney(change, 1, cash[7]);
+        change = result.newChange;
+        cash[7] = result.numHave;
+        money.m1 = result.numReturn;
     }
-    if (change >= 0.50) {
-        result = calculateMoney(change, 0.50);
-        if (cash[8] >= result[1]) {
-            change = result[0];
-            money.m50c = result[1];
-        }
+    if (change >= 0.5 && cash[8] > 0) {
+        result = calculateMoney(change, 0.5, cash[8]);
+        change = result.newChange;
+        cash[8] = result.numHave;
+        money.m50c = result.numReturn;
     }
-    if (change >= 0.20) {
-        result = calculateMoney(change, 0.20);
-        if (cash[9] >= result[1]) {
-            change = result[0];
-            money.m20c = result[1];
-        }
+    if (change >= 0.2 && cash[9] > 0) {
+        result = calculateMoney(change, 0.2, cash[9]);
+        change = result.newChange;
+        cash[9] = result.numHave;
+        money.m20c = result.numReturn;
     }
-    if (change >= 0.10) {
-        result = calculateMoney(change, 0.10);
-        if (cash[10] >= result[1]) {
-            change = result[0];
-            money.m10c = result[1];
-        }
+    if (change >= 0.1 && cash[10] > 0) {
+        result = calculateMoney(change, 0.1, cash[10]);
+        change = result.newChange;
+        cash[10] = result.numHave;
+        money.m10c = result.numReturn;
     }
-    if (change >= 0.05) {
-        result = calculateMoney(change, 0.05);
-        if (cash[11] >= result[1]) {
-            change = result[0];
-            money.m5c = result[1];
-        }
+    if (change >= 0.05 && cash[11] > 0) {
+        result = calculateMoney(change, 0.05, cash[11]);
+        change = result.newChange;
+        cash[11] = result.numHave;
+        money.m5c = result.numReturn;
     }
-    if (change >= 0.02) {
-        result = calculateMoney(change, 0.02);
-        if (cash[12] >= result[1]) {
-            change = result[0];
-            money.m2c = result[1];
-        }
+    if (change >= 0.02 && cash[12] > 0) {
+        result = calculateMoney(change, 0.02, cash[12]);
+        change = result.newChange;
+        cash[12] = result.numHave;
+        money.m2c = result.numReturn;
     }
-    if (change >= 0.01) {
-        result = calculateMoney(change, 0.01);
-        if (cash[13] >= result[1]) {
-            change = result[0];
-            money.m1c = result[1];
-        }
+    if (change >= 0.01 && cash[13] > 0) {
+        result = calculateMoney(change, 0.01, cash[13]);
+        change = result.newChange;
+        cash[13] = result.numHave;
+        money.m1c = result.numReturn;
     }
-    return money;
+    if (change != 0.00) {
+        console.log(change)
+        document.getElementById("result-change").innerText = "¡FALTA DINERO EN CAJA PARA DEVOLVER!";
+    }
+    console.log(cash); // Array que muestra cómo queda la caja tras dar el cambio
+    return writeResult(money);
 };
 
-// Lista de resultado por pantalla
+/* Lista de resultado por pantalla */
 var writeResult = (money) => {
     document.getElementById("b200").innerText = "Billetes de 200€ = " + money.b200;
     document.getElementById("b100").innerText = "Billetes de 100€ = " + money.b100;
@@ -182,13 +182,13 @@ var writeResult = (money) => {
     document.getElementById("m1c").innerText = "Monedas de 1cents = " + money.m1c;
 }
 
-var cashInit = createCashBox(0, 10);
-// Mostrar el cálculo del importe a devolver
+/* Crear caja con cambio de forma aleatoria */
+var cashInit = createCashBox(0, 5);
+/* Mostrar el cálculo del importe a devolver */
 var result = () => document.getElementById("result").innerText = moneyRefund();
-var resultChange = () => writeResult(calculateChange(cashInit, result()));
+var resultChange = () => calculateChange(cashInit, result());
+console.log(cashInit); // Array ara ver en consola el número de billetes y monedas de cada caso
 
-// Eventos
+/* Eventos */
 document.getElementById("button-calulate").addEventListener("click", result);
 document.getElementById("button-calulate").addEventListener("click", resultChange);
-
-console.log(cashInit);
